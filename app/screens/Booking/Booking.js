@@ -1,35 +1,99 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {
-  Dimensions, Image, PermissionsAndroid, Text, View,
+  Dimensions, Image, PermissionsAndroid, View, Text, TouchableOpacity,
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
-import { currentPosition, selectedStationIcon, stationIcon } from '../../assets/appImages';
-import SearchBar from '../../components/SearchBar/SearchBar';
+import LinearGradient from 'react-native-linear-gradient';
+import { currentPosition, stationIcon, stationPreview, selectedStationIcon } from '~assets/appImages';
+
+import CustomBottomSheet from '~components/CustomBottomSheet/CustomBottomSheet';
+import { navigateTo } from '~helpers/NavigationService';
+import {Location, Price, Time} from '~assets/Icons';
+
+import CustomButton from '~components/CustomButton/CustomButton';
+
+import { gradientColors } from '~utilities/Constants';
+import SearchBar from '~components/SearchBar/SearchBar';
 import {
   // fetchDistanceBetweenPoints,
   fetchLatLng,
-  useGetChargingStationsQuery,
   useLazyGetPlacesPredictionsQuery,
+  useGetChargingStationsQuery,
 } from './api';
 
 import {mcD} from './data';
 import { GOOGLE_API_KEY } from '../../constants';
 import { useDebounce } from '../../hooks/useDebounce';
+import styles from './styles';
 
-const Map = () => {
+const slots = [
+  {
+    time: '10 AM - 11 AM',
+    available: true,
+  },
+  {
+    time: '11 AM - 12 PM',
+    available: false,
+  },
+  {
+    time: '12 PM - 1 PM',
+    available: true,
+  },
+  {
+    time: '1 PM - 2 PM',
+    available: true,
+  },
+  {
+    time: '2 PM - 3 PM',
+    available: true,
+  },
+  {
+    time: '3 PM - 4 PM',
+    available: true,
+  },
+  {
+    time: '4 PM - 5 PM',
+    available: true,
+  },
+  {
+    time: '5 PM - 6 PM',
+    available: true,
+  },
+  {
+    time: '6 PM - 7 PM',
+    available: true,
+  },
+  {
+    time: '8 PM - 9 PM',
+    available: true,
+  },
+  {
+    time: '8 PM - 9 PM',
+    available: true,
+  },
+  {
+    time: '10 PM - 11 PM',
+    available: true,
+  },
+];
+
+const Booking = (props) => {
+  const {stationName = 'Zeon Charging Station', stationAddress = 'Gokul Oottupura Veg Restaurant, NH66, Padivattom, Edappally', stationImage, openTime = '10:00 AM', closeTime = '10:59 PM', price = '₹ 25/kWh'} = props;
+
   const [region, setRegion] = useState(mcD); // TO DO - update initial location
   const [search, setSearch] = useState({term: '', fetchPredictions: false});
   const [predictions, setPredictions] = useState([]);
   const [showPredictions, setShowPredictions] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState();
   const [showPopup, setShowPopup] = useState(false); // TO DO - remove this boolean
   const [selectedStation, setSelectedStation] = useState(); // TO DO - use this for showing modal
 
   const mapRef = useRef();
-  const {data} = useGetChargingStationsQuery();
 
+  const {data} = useGetChargingStationsQuery();
   const formatDataIntoMarker = () => {
     let markerSet = [];
     if (data) {
@@ -116,7 +180,6 @@ const Map = () => {
 
   const onSelectStation = async (stationCoordinate, stationId) => {
     if (selectedStation?.id === stationId) { setShowPopup(false); setSelectedStation(); return; }
-    setShowPopup(true);
     // const distance = await fetchDistanceBetweenPoints(
     //   region.latitude,
     //   region.longitude,
@@ -135,6 +198,52 @@ const Map = () => {
     setShowPredictions(false);
   };
 
+  const attributes = [
+    {
+      Icon: Location,
+      label: '5.9km',
+    },
+    {
+      Icon: Time,
+      label: `${openTime} - ${closeTime}`,
+    },
+    {
+      Icon: Price,
+      label: price,
+    },
+  ];
+
+  const closeModal = () => setShowPopup(false);
+
+  const renderAttribute = item => {
+    const {Icon, label} = item;
+    return (
+      <View style={styles.row}>
+        <Icon />
+        <Text style={styles.attributeText}>{label}</Text>
+      </View>
+    );
+  };
+
+  const renderSlots = () => (
+    <View style={[styles.row, styles.slotRow]}>
+      {slots.map(slot => {
+        const {available, time} = slot;
+        const isSelected = selectedSlot === time;
+        return (
+          <TouchableOpacity disabled={!available} activeOpacity={0.8} onPress={() => setSelectedSlot(time)} style={[styles.slotContainer, available && styles.availableSlot, isSelected && styles.selectedSlot]}>
+            <Text style={[styles.slotText, available && styles.blackText]}>{time}</Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+
+  const navigateToBookingSuccess = () => {
+    setShowPopup(false);
+    navigateTo('BookingSuccess');
+  };
+
   return (
     <>
       <MapView
@@ -150,10 +259,11 @@ const Map = () => {
             key={marker.title}
             onPress={() => onSelectStation(marker.latlng, marker.id)}
             coordinate={marker.latlng}>
+
             <Image
               source={selectedStation?.id === marker.id ? selectedStationIcon : stationIcon}
               style={{width: 36, height: 36}}
-              />
+            />
           </Marker>
         ))}
         <Marker coordinate={region}>
@@ -177,14 +287,39 @@ const Map = () => {
           onPredictionTapped={onPredictionTapped}
           onClear={onClear}
         />
+        {showPopup && (
+        <View style={{position: 'absolute', bottom: 0, width: Dimensions.get('window').width, height: 100, backgroundColor: 'white'}}>
+          <Text style={{color: 'red'}}>{selectedStation?.distance}</Text>
+        </View>
+        )}
+        <CustomBottomSheet handleSwipeDown={closeModal} isVisible={showPopup} customStyle={styles.modal}>
+          <TouchableOpacity onPress={closeModal} style={styles.slider} />
+          <View style={[styles.row, styles.stationDetails]}>
+            <View>
+              <Image style={styles.image} source={stationPreview} />
+              <View style={styles.banner}><Text style={styles.bannerText}>Open</Text></View>
+            </View>
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>{stationName}</Text>
+              <Text style={styles.subTitle}>{stationAddress}</Text>
+            </View>
+          </View>
+          <View style={[styles.row, styles.attributeContainer]}>{attributes.map(attribute => renderAttribute(attribute))}</View>
+          <View style={styles.divider} />
+          <View style={styles.row}>
+            <Text style={[styles.subTitle, styles.blackText]}>Upcoming Slots</Text>
+          </View>
+          {renderSlots()}
+          <View style={[styles.row, styles.attributeContainer]}>
+            <CustomButton text="CANCEL" containerStyle={styles.cancel} />
+            <LinearGradient useAngle angle={105.4} colors={gradientColors} style={[styles.book, !!selectedSlot && styles.enabledButton]}>
+              <CustomButton onClick={navigateToBookingSuccess} containerStyle={styles.buttonContainer} text="BOOK NOW" />
+            </LinearGradient>
+          </View>
+        </CustomBottomSheet>
       </View>
-      {showPopup && (
-      <View style={{position: 'absolute', bottom: 0, width: Dimensions.get('window').width, height: 100, backgroundColor: 'white'}}>
-        <Text style={{color: 'red'}}>{selectedStation?.distance}</Text>
-      </View>
-      )}
     </>
   );
 };
 
-export default Map;
+export default Booking;
