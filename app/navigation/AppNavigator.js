@@ -3,21 +3,22 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {setTopLevelNavigator} from '~helpers/NavigationService';
-import Home from '~screens/Home/Home';
+import {Home, Login} from '~screens';
 
 const AppNavigator = () => {
   const {Screen, Navigator} = createStackNavigator();
 
   return (
     <NavigationContainer
-      ref={(navigatorRef) => {
+      ref={navigatorRef => {
         setTopLevelNavigator(navigatorRef);
       }}>
       <Navigator
-        initialRouteName="Home"
+        initialRouteName="Login"
         screenOptions={{
           headerShown: false,
         }}>
+        <Screen name="Login" component={Login} />
         <Screen name="Home" component={Home} />
       </Navigator>
     </NavigationContainer>
