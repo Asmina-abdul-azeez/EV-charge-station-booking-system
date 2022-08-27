@@ -66,7 +66,10 @@ const Login = () => {
   return (
     <View style={styles.root}>
       <StatusBar barStyle="dark-content" />
-      <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false} style={styles.root}>
+      <ScrollView
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+        style={styles.root}>
         <Image source={login} style={styles.image} />
         <Text style={styles.title}>Welcome,</Text>
         <Text style={styles.subTitle}>Sign in to continue!</Text>

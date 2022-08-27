@@ -11,12 +11,14 @@ import { currentPosition, stationIcon, stationPreview, selectedStationIcon } fro
 
 import CustomBottomSheet from '~components/CustomBottomSheet/CustomBottomSheet';
 import { navigateTo } from '~helpers/NavigationService';
-import {Location, Price, Time} from '~assets/Icons';
+import {CalendarSmall, Location, Price, Time} from '~assets/Icons';
 
 import CustomButton from '~components/CustomButton/CustomButton';
 
-import { gradientColors } from '~utilities/Constants';
+import { Colors, gradientColors } from '~utilities/Constants';
 import SearchBar from '~components/SearchBar/SearchBar';
+import { Calendar } from 'react-native-calendars';
+import moment from 'moment';
 import {
   // fetchDistanceBetweenPoints,
   fetchLatLng,
@@ -90,8 +92,17 @@ const Booking = (props) => {
   const [selectedSlot, setSelectedSlot] = useState();
   const [showPopup, setShowPopup] = useState(false); // TO DO - remove this boolean
   const [selectedStation, setSelectedStation] = useState(); // TO DO - use this for showing modal
+  const [selectedDate, setSelectedDate] = useState();
+  const [markedDate, setMarkedDate] = useState({});
+  const [showCalendar, setShowCalendar] = useState();
 
   const mapRef = useRef();
+
+  useEffect(() => {
+    const date = new Date().toLocaleDateString();
+    const formattedDate = moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD');
+    handleDateSelection(formattedDate);
+  }, []);
 
   const {data} = useGetChargingStationsQuery();
   const formatDataIntoMarker = () => {
@@ -124,6 +135,23 @@ const Booking = (props) => {
     );
     return () => Geolocation.clearWatch(watchId);
   }, []);
+
+  const handleDateSelection = (date) => {
+    const dateObj = {};
+    dateObj[date] = {
+      selected: true,
+      selectedColor: Colors.TURQUOISE,
+      customStyles: {
+        text: {
+          color: Colors.WHITE,
+        },
+      },
+    };
+    setMarkedDate(dateObj);
+    const formattedDate = moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY');
+    setSelectedDate(formattedDate);
+    setShowCalendar(false);
+  };
 
   const onChangeText = async () => {
     if (search.term?.trim() === '') {
@@ -186,6 +214,7 @@ const Booking = (props) => {
     //   stationCoordinate.latitude,
     //   stationCoordinate.longitude,
     // );
+    setShowPopup(true);
     fetchDistanceBetweenPoints(stationCoordinate, stationId);
     // setSelectedStation({
     //   ...stationCoordinate,
@@ -225,6 +254,10 @@ const Booking = (props) => {
     );
   };
 
+  console.log('asmi', selectedDate);
+
+  const renderCalendar = () => <Calendar markingType="custom" markedDates={markedDate} onDayPress={(date) => handleDateSelection(date.dateString)} theme={{arrowColor: Colors.TURQUOISE, selectedDayTextColor: Colors.TURQUOISE, todayTextColor: Colors.TURQUOISE}} />;
+
   const renderSlots = () => (
     <View style={[styles.row, styles.slotRow]}>
       {slots.map(slot => {
@@ -243,6 +276,10 @@ const Booking = (props) => {
     setShowPopup(false);
     navigateTo('BookingSuccess');
   };
+
+  const handleShowCalendar = () => setShowCalendar(true);
+
+  const handleCancel = () => setShowPopup(false);
 
   return (
     <>
@@ -306,16 +343,22 @@ const Booking = (props) => {
           </View>
           <View style={[styles.row, styles.attributeContainer]}>{attributes.map(attribute => renderAttribute(attribute))}</View>
           <View style={styles.divider} />
-          <View style={styles.row}>
+          <View style={[styles.row, styles.calendarContainer]}>
             <Text style={[styles.subTitle, styles.blackText]}>Upcoming Slots</Text>
+            <View style={[styles.row, styles.dateContainer]}>
+              <Text style={styles.date}>{selectedDate}</Text>
+              <TouchableOpacity activeOpacity={0.8} onPress={handleShowCalendar}><CalendarSmall /></TouchableOpacity>
+            </View>
           </View>
-          {renderSlots()}
+          {showCalendar ? renderCalendar() : renderSlots()}
+          {!showCalendar && (
           <View style={[styles.row, styles.attributeContainer]}>
-            <CustomButton text="CANCEL" containerStyle={styles.cancel} />
+            <CustomButton onClick={handleCancel} text="CANCEL" containerStyle={styles.cancel} />
             <LinearGradient useAngle angle={105.4} colors={gradientColors} style={[styles.book, !!selectedSlot && styles.enabledButton]}>
               <CustomButton onClick={navigateToBookingSuccess} containerStyle={styles.buttonContainer} text="BOOK NOW" />
             </LinearGradient>
           </View>
+          )}
         </CustomBottomSheet>
       </View>
     </>
