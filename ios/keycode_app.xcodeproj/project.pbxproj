@@ -11,13 +11,13 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		493F7C3C22BD5D1857277ACE /* libPods-keycode_app.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7982D4406BF09FB3DC95D123 /* libPods-keycode_app.a */; };
-		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		E38E6C04A8D07A58C36DA636 /* libPods-keycode_app-keycode_appTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95CE15E875CEA5F3BF226ABB /* libPods-keycode_app-keycode_appTests.a */; };
-		60C8DDAE66A9465DA6E9FE2F /* SofiaProBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B855627944CC88D6E5D66 /* SofiaProBold.ttf */; };
 		1B22CC40E24A44618CF3EEDF /* SofiaProLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE5799485C514FF784E72FFE /* SofiaProLight.ttf */; };
-		B0351427349143859058BA81 /* SofiaProMedium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 782B2286A163408EBACD2D03 /* SofiaProMedium.ttf */; };
+		493F7C3C22BD5D1857277ACE /* libPods-keycode_app.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7982D4406BF09FB3DC95D123 /* libPods-keycode_app.a */; };
+		60C8DDAE66A9465DA6E9FE2F /* SofiaProBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B855627944CC88D6E5D66 /* SofiaProBold.ttf */; };
 		7136351FD8EA4A7C8ACA8ABE /* SofiaProRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7801C5F09B9942EBBD607C71 /* SofiaProRegular.ttf */; };
+		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		B0351427349143859058BA81 /* SofiaProMedium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 782B2286A163408EBACD2D03 /* SofiaProMedium.ttf */; };
+		E38E6C04A8D07A58C36DA636 /* libPods-keycode_app-keycode_appTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95CE15E875CEA5F3BF226ABB /* libPods-keycode_app-keycode_appTests.a */; };
 		F28F74FCEC86440097032FD9 /* SofiaProSemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C770BF97220E4F489305E622 /* SofiaProSemiBold.ttf */; };
 /* End PBXBuildFile section */
 
@@ -43,17 +43,17 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = keycode_app/main.m; sourceTree = "<group>"; };
 		15434EAE1F01D504D890C813 /* Pods-keycode_app-keycode_appTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-keycode_app-keycode_appTests.debug.xcconfig"; path = "Target Support Files/Pods-keycode_app-keycode_appTests/Pods-keycode_app-keycode_appTests.debug.xcconfig"; sourceTree = "<group>"; };
 		204D5DD6A663D472274916F7 /* Pods-keycode_app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-keycode_app.debug.xcconfig"; path = "Target Support Files/Pods-keycode_app/Pods-keycode_app.debug.xcconfig"; sourceTree = "<group>"; };
+		5F2B855627944CC88D6E5D66 /* SofiaProBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = SofiaProBold.ttf; path = ../app/assets/fonts/SofiaProBold.ttf; sourceTree = "<group>"; };
+		7801C5F09B9942EBBD607C71 /* SofiaProRegular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = SofiaProRegular.ttf; path = ../app/assets/fonts/SofiaProRegular.ttf; sourceTree = "<group>"; };
+		782B2286A163408EBACD2D03 /* SofiaProMedium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = SofiaProMedium.ttf; path = ../app/assets/fonts/SofiaProMedium.ttf; sourceTree = "<group>"; };
 		7982D4406BF09FB3DC95D123 /* libPods-keycode_app.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-keycode_app.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = keycode_app/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		95CE15E875CEA5F3BF226ABB /* libPods-keycode_app-keycode_appTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-keycode_app-keycode_appTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA22FD75115CFF0DB7660456 /* Pods-keycode_app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-keycode_app.release.xcconfig"; path = "Target Support Files/Pods-keycode_app/Pods-keycode_app.release.xcconfig"; sourceTree = "<group>"; };
+		BE5799485C514FF784E72FFE /* SofiaProLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = SofiaProLight.ttf; path = ../app/assets/fonts/SofiaProLight.ttf; sourceTree = "<group>"; };
+		C770BF97220E4F489305E622 /* SofiaProSemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = SofiaProSemiBold.ttf; path = ../app/assets/fonts/SofiaProSemiBold.ttf; sourceTree = "<group>"; };
 		D20BB5E2B0DF65CE47F28538 /* Pods-keycode_app-keycode_appTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-keycode_app-keycode_appTests.release.xcconfig"; path = "Target Support Files/Pods-keycode_app-keycode_appTests/Pods-keycode_app-keycode_appTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		5F2B855627944CC88D6E5D66 /* SofiaProBold.ttf */ = {isa = PBXFileReference; name = "SofiaProBold.ttf"; path = "../app/assets/fonts/SofiaProBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		BE5799485C514FF784E72FFE /* SofiaProLight.ttf */ = {isa = PBXFileReference; name = "SofiaProLight.ttf"; path = "../app/assets/fonts/SofiaProLight.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		782B2286A163408EBACD2D03 /* SofiaProMedium.ttf */ = {isa = PBXFileReference; name = "SofiaProMedium.ttf"; path = "../app/assets/fonts/SofiaProMedium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		7801C5F09B9942EBBD607C71 /* SofiaProRegular.ttf */ = {isa = PBXFileReference; name = "SofiaProRegular.ttf"; path = "../app/assets/fonts/SofiaProRegular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		C770BF97220E4F489305E622 /* SofiaProSemiBold.ttf */ = {isa = PBXFileReference; name = "SofiaProSemiBold.ttf"; path = "../app/assets/fonts/SofiaProSemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,7 +160,7 @@
 			sourceTree = "<group>";
 		};
 		D4F4A9C1165647D085CA2487 /* Resources */ = {
-			isa = "PBXGroup";
+			isa = PBXGroup;
 			children = (
 				5F2B855627944CC88D6E5D66 /* SofiaProBold.ttf */,
 				BE5799485C514FF784E72FFE /* SofiaProLight.ttf */,
@@ -169,8 +169,8 @@
 				C770BF97220E4F489305E622 /* SofiaProSemiBold.ttf */,
 			);
 			name = Resources;
-			sourceTree = "<group>";
 			path = "";
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
