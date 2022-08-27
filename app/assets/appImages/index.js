@@ -17,3 +17,4 @@ export const add = require('./feedStories/add.png');
 export const post1 = require('./feedPosts/post1.png');
 export const post2 = require('./feedPosts/post2.png');
 export const post3 = require('./feedPosts/post3.png');
+export const car = require('./car.png');

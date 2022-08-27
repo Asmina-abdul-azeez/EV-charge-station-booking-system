@@ -10,7 +10,8 @@ import CustomButton from '~components/CustomButton/CustomButton';
 import styles from './styles';
 
 const BookingSuccess = props => {
-  const {latitude, longitude} = props;
+  const {route, navigation} = props;
+  const {latitude, longitude} = route?.params || {};
 
   const handleContact = () => Linking.openURL('tel:9999999999');
 
@@ -27,6 +28,10 @@ const BookingSuccess = props => {
         }
       })
       .catch(err => console.error('An error occurred', err));
+  };
+
+  const goToHomePage = () => {
+    navigation.navigate('Home');
   };
 
   return (
@@ -61,7 +66,7 @@ const BookingSuccess = props => {
           </View>
         </View>
         <LinearGradient useAngle angle={105.4} style={styles.button} colors={gradientColors}>
-          <CustomButton textStyle={styles.buttonText} text="GO TO HOMEPAGE" />
+          <CustomButton textStyle={styles.buttonText} text="GO TO HOMEPAGE" onClick={goToHomePage} />
         </LinearGradient>
       </ScrollView>
     </View>
