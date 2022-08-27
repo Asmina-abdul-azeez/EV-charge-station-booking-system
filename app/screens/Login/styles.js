@@ -40,10 +40,12 @@ const styles = ScaledSheet.create({
     borderRadius: '10@s',
     borderColor: Colors.GAINSBORO,
     paddingHorizontal: '8@ms',
+    justifyContent: 'space-between',
+  },
+  inputText: {
     fontSize: '15@ms',
     lineHeight: '17@mvs',
     color: Colors.NIGHT_RIDER,
-    justifyContent: 'space-between',
   },
   forgot: {
     alignSelf: 'flex-end',
@@ -55,6 +57,9 @@ const styles = ScaledSheet.create({
   },
   focused: {
     borderColor: Colors.TURQUOISE,
+  },
+  buttonContainer: {
+    width: '100%',
   },
   button: {
     height: '54@mvs',
