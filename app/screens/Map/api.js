@@ -1,8 +1,8 @@
 import {GOOGLE_API_KEY, GOOGLE_PLACES_API_BASE_URL} from '../../constants';
 import {callAPI} from '../../api/axios';
-import {googlePlacesApi} from '../../api/service';
+import {bookingApi, googlePlacesApi} from '../../api/service';
 
-const sampleApi = googlePlacesApi.injectEndpoints({
+const googleApiService = googlePlacesApi.injectEndpoints({
   endpoints: builder => ({
     getPlacesPredictions: builder.query({
       query: text => `/autocomplete/json?key=${GOOGLE_API_KEY}&input=${text}`,
@@ -10,7 +10,16 @@ const sampleApi = googlePlacesApi.injectEndpoints({
   }),
 });
 
-export const {useGetPlacesPredictionsQuery, useLazyGetPlacesPredictionsQuery} = sampleApi;
+const booingApiService = bookingApi.injectEndpoints({
+  endpoints: builder => ({
+    getChargingStations: builder.query({
+      query: () => '/charging-station',
+    }),
+  }),
+});
+
+export const {useGetPlacesPredictionsQuery, useLazyGetPlacesPredictionsQuery} = googleApiService;
+export const {useGetChargingStationsQuery} = booingApiService;
 
 export const fetchPredictions = async text => {
   const url = `${GOOGLE_PLACES_API_BASE_URL}/autocomplete/json?key=${GOOGLE_API_KEY}&input=${text}`;

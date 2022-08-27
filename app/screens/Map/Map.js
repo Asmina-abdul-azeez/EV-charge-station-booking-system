@@ -6,15 +6,16 @@ import {
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
-import { currentPosition, stationIcon } from '../../assets/appImages';
+import { currentPosition, selectedStationIcon, stationIcon } from '../../assets/appImages';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import {
   // fetchDistanceBetweenPoints,
   fetchLatLng,
+  useGetChargingStationsQuery,
   useLazyGetPlacesPredictionsQuery,
 } from './api';
 
-import {markers, mcD} from './data';
+import {mcD} from './data';
 import { GOOGLE_API_KEY } from '../../constants';
 import { useDebounce } from '../../hooks/useDebounce';
 
@@ -27,6 +28,23 @@ const Map = () => {
   const [selectedStation, setSelectedStation] = useState(); // TO DO - use this for showing modal
 
   const mapRef = useRef();
+  const {data} = useGetChargingStationsQuery();
+
+  const formatDataIntoMarker = () => {
+    let markerSet = [];
+    if (data) {
+      markerSet = data.map(item => ({
+        id: item.id,
+        latlng: {
+          latitude: parseFloat(item.latitude),
+          longitude: parseFloat(item.longitude),
+        },
+      }));
+    }
+    return markerSet;
+  };
+
+  const markers = formatDataIntoMarker();
 
   const [getPlacesPredictions] = useLazyGetPlacesPredictionsQuery();
 
@@ -127,13 +145,13 @@ const Map = () => {
         onMapReady={checkForLocationPermission}
         showsUserLocation
         style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height}}>
-        {markers.map((marker) => (
+        {markers && markers.map((marker) => (
           <Marker
             key={marker.title}
             onPress={() => onSelectStation(marker.latlng, marker.id)}
             coordinate={marker.latlng}>
             <Image
-              source={stationIcon}
+              source={selectedStation?.id === marker.id ? selectedStationIcon : stationIcon}
               style={{width: 36, height: 36}}
               />
           </Marker>
