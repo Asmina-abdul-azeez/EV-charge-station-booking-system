@@ -1,5 +1,5 @@
 {
-    "arrowParens": "always",
+    "arrowParens": "avoid",
     "bracketSpacing": false,
     "jsxBracketSameLine": true,
     "jsxSingleQuote": false,
