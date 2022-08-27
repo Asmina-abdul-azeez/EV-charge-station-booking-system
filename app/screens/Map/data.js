@@ -21,6 +21,6 @@ export const harshDhabha = {
 
 export const markers = [
   // {latlng: mcD, title: 'McDonalds', description: 'Food'},
-  {latlng: thaal, title: 'Thaal Kitchen', description: 'Dine in'},
-  {latlng: harshDhabha, title: 'Harsh Dhabha', description: 'North Indian'},
+  {id: 1, latlng: thaal, title: 'Thaal Kitchen', description: 'Dine in'},
+  {id: 2, latlng: harshDhabha, title: 'Harsh Dhabha', description: 'North Indian'},
 ];

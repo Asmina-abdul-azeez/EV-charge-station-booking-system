@@ -4,7 +4,7 @@ import {Image, View, Text, TextInput, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import {Eye} from '~assets/Icons';
-import {login} from '~assets/Images';
+import {login} from '~assets/appImages';
 import CustomButton from '~components/CustomButton/CustomButton';
 import {navigateTo} from '~helpers/NavigationService';
 import {Colors, gradientColors} from '~utilities/Constants';
@@ -43,7 +43,7 @@ const Login = () => {
 
   const handleShowPassword = () => setShowPassword(true);
 
-  const navigateToBooking = () => navigateTo('Booking');
+  const navigateToBooking = () => navigateTo('Home');
 
   const renderInput = ({label, placeholder, value, onChange, Icon, ref}) => (
     <View>

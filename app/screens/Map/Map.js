@@ -1,47 +1,67 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  Dimensions, Image, PermissionsAndroid, View,
+  Dimensions, Image, PermissionsAndroid, Text, View,
 } from 'react-native';
-import MapView, {Marker} from 'react-native-maps';
-import { currentPosition, stationIcon } from '../../assets/images';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import Geolocation from '@react-native-community/geolocation';
+import { currentPosition, stationIcon } from '../../assets/appImages';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import {
+  // fetchDistanceBetweenPoints,
   fetchLatLng,
   useLazyGetPlacesPredictionsQuery,
 } from './api';
 
 import {markers, mcD} from './data';
+import { GOOGLE_API_KEY } from '../../constants';
+import { useDebounce } from '../../hooks/useDebounce';
 
 const Map = () => {
-  const [region, setRegion] = useState(mcD);
+  const [region, setRegion] = useState(mcD); // TO DO - update initial location
   const [search, setSearch] = useState({term: '', fetchPredictions: false});
   const [predictions, setPredictions] = useState([]);
   const [showPredictions, setShowPredictions] = useState(false);
+  const [showPopup, setShowPopup] = useState(false); // TO DO - remove this boolean
+  const [selectedStation, setSelectedStation] = useState(); // TO DO - use this for showing modal
 
   const mapRef = useRef();
 
   const [getPlacesPredictions] = useLazyGetPlacesPredictionsQuery();
 
-  const onChangeText = async text => {
-    setSearch({term: text, fetchPredictions: true});
-    if (text.trim() === '') {
+  useEffect(() => {
+    const watchId = Geolocation.watchPosition(
+      pos => {
+        setRegion({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        });
+      },
+      e => console.log('rose error in watch', e),
+    );
+    return () => Geolocation.clearWatch(watchId);
+  }, []);
+
+  const onChangeText = async () => {
+    if (search.term?.trim() === '') {
       setPredictions([]);
       setShowPredictions(false);
       return;
     }
-    // const result = await fetchPredictions(text);
-    // setPredictions(result.predictions);
-    // setShowPredictions(true);
-    const res = await getPlacesPredictions(text);
-    console.log('rose predictions1', res);
+    if (!search.fetchPredictions) return;
+    const res = await getPlacesPredictions(search.term);
+    const predictionResult = res.data.predictions;
+    setPredictions(predictionResult);
+    setShowPredictions(true);
   };
+
+  useDebounce(onChangeText, 300, [search.term]);
 
   const onPredictionTapped = async (placeId, description) => {
     const result = await fetchLatLng(placeId);
     setShowPredictions(false);
-    setSearch({term: description});
+    setSearch({term: description, fetchPredictions: false});
     setRegion({latitude: result.location.lat, longitude: result.location.lng});
     updateCameraHeading(result.location);
   };
@@ -57,35 +77,68 @@ const Map = () => {
     );
   };
 
+  // eslint-disable-next-line max-len
+  const fetchDistanceBetweenPoints = (stationCoordinate, stationId) => {
+    const {latitude: lat1, longitude: lng1} = region;
+    const {latitude: lat2, longitude: lng2} = stationCoordinate;
+    const urlToFetchDistance = `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${lat1},${lng1}&destinations=${lat2}%2C${lng2}&key=${GOOGLE_API_KEY}`;
+    fetch(urlToFetchDistance)
+      .then(res => res.json())
+      .then(res => {
+        const distanceString = res.rows[0].elements[0].distance.text;
+        setSelectedStation({
+          ...stationCoordinate,
+          id: stationId,
+          distance: distanceString || 'Unable to determine',
+        });
+        return distanceString;
+      })
+      .catch(() => null);
+  };
+
+  const onSelectStation = async (stationCoordinate, stationId) => {
+    if (selectedStation?.id === stationId) { setShowPopup(false); setSelectedStation(); return; }
+    setShowPopup(true);
+    // const distance = await fetchDistanceBetweenPoints(
+    //   region.latitude,
+    //   region.longitude,
+    //   stationCoordinate.latitude,
+    //   stationCoordinate.longitude,
+    // );
+    fetchDistanceBetweenPoints(stationCoordinate, stationId);
+    // setSelectedStation({
+    //   ...stationCoordinate,
+    //   distance: distance || 'Unable to determine',
+    // });
+  };
+
+  const onClear = () => {
+    setSearch({ term: '', fetchPredictions: false});
+    setShowPredictions(false);
+  };
+
   return (
     <>
       <MapView
         ref={mapRef}
-        provider="google"
+        provider={PROVIDER_GOOGLE}
         mapType="standard" // [hybrid, standard]
         initialRegion={region}
-        // region={region}
         onMapReady={checkForLocationPermission}
-        // onRegionChange={onRegionChange}
         showsUserLocation
         style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height}}>
         {markers.map((marker) => (
           <Marker
             key={marker.title}
-            // onPress={e => console.log('rose e', e)}
-            coordinate={marker.latlng}
-            title={marker.title}
-            description={marker.description}>
+            onPress={() => onSelectStation(marker.latlng, marker.id)}
+            coordinate={marker.latlng}>
             <Image
               source={stationIcon}
               style={{width: 36, height: 36}}
-            />
+              />
           </Marker>
         ))}
-        <Marker
-          // flat
-          coordinate={region}
-        >
+        <Marker coordinate={region}>
           <Image source={currentPosition} style={{width: 24, height: 24}} />
         </Marker>
       </MapView>
@@ -100,12 +153,18 @@ const Map = () => {
         }}>
         <SearchBar
           value={search.term}
-          onChangeText={onChangeText}
+          onChangeText={text => setSearch({term: text, fetchPredictions: true})}
           showPredictions={showPredictions}
           predictions={predictions}
           onPredictionTapped={onPredictionTapped}
+          onClear={onClear}
         />
       </View>
+      {showPopup && (
+      <View style={{position: 'absolute', bottom: 0, width: Dimensions.get('window').width, height: 100, backgroundColor: 'white'}}>
+        <Text style={{color: 'red'}}>{selectedStation?.distance}</Text>
+      </View>
+      )}
     </>
   );
 };

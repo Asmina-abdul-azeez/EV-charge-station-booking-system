@@ -12,6 +12,8 @@ target 'keycode_app' do
     :hermes_enabled => false
   )
 
+  pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
+
   target 'keycode_appTests' do
     inherit! :complete
     # Pods for testing

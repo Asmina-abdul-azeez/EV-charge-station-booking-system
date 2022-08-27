@@ -39,3 +39,15 @@ export const fetchLatLng = async placeId => {
   }
   return result;
 };
+
+export const fetchDistanceBetweenPoints = (lat1, lng1, lat2, lng2) => {
+  // TO DO - replace fetch
+  const urlToFetchDistance = `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${lat1},${lng1}&destinations=${lat2}%2C${lng2}&key=${GOOGLE_API_KEY}`;
+  fetch(urlToFetchDistance)
+    .then(res => res.json())
+    .then(res => {
+      const distanceString = res.rows[0].elements[0].distance.text;
+      return distanceString;
+    })
+    .catch(() => null);
+};
