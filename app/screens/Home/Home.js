@@ -1,10 +1,10 @@
 import React from 'react';
 import {View} from 'react-native';
-import Map from '../Map';
+import Feed from '../Feed/Feed';
 
 const Home = () => (
   <View>
-    <Map />
+    <Feed />
   </View>
 );
 
