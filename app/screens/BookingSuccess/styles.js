@@ -57,7 +57,7 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   card: {
-    backgroundColor: Colors.WHISPER,
+    backgroundColor: Colors.SNOW,
     borderRadius: '15@s',
     paddingHorizontal: '30@ms',
     paddingVertical: '22@mvs',

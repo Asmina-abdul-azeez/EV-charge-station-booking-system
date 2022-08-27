@@ -4,7 +4,7 @@ import {Image, View, Text, TextInput, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import {Eye} from '~assets/Icons';
-import {login} from '~assets/Images';
+import {login} from '~assets/appImages';
 import CustomButton from '~components/CustomButton/CustomButton';
 import {navigateTo} from '~helpers/NavigationService';
 import {Colors, gradientColors} from '~utilities/Constants';

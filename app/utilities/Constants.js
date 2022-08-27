@@ -21,6 +21,7 @@ export const Colors = {
   LIGHT_GREY: '#D6D6D6',
   BRIGHT_TURQUOISE: '#0FE5BF',
   NOBEL: '#9A9A9A',
+  SNOW: '#FAFAFA',
 };
 
 export const gradientColors = ['#26E7BF', '#3CE6A0', '#71FFCF'];

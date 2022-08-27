@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
+import { CloseIcon } from 'native-base';
 import React, {useState} from 'react';
 import {FlatList, Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import { search } from '~assets/Images';
+import { search } from '~assets/appImages';
 
 const SearchBar = props => {
   // eslint-disable-next-line react/prop-types
-  const {value, onChangeText, onPredictionTapped, predictions, showPredictions} = props;
+  const {value, onChangeText, onPredictionTapped, predictions, showPredictions, onClear} = props;
 
   const [inputSize, setInputSize] = useState({width: 0, height: 0});
 
@@ -57,6 +58,7 @@ const SearchBar = props => {
           onChangeText={onChangeText}
           returnKeyType="search"
         />
+        {value !== '' && <CloseIcon onPress={onClear} />}
       </View>
       {showPredictions && (
         <FlatList
@@ -64,23 +66,21 @@ const SearchBar = props => {
           renderItem={({item}) => (
             <TouchableOpacity
               style={{
-                paddingBottom: 15,
-                marginBottom: 15,
-                borderBottomColor: 'black',
+                borderBottomColor: '#E0E0E0',
                 borderBottomWidth: 1,
+                borderRadius: 9,
               }}
               onPress={() => onPredictionTapped(item.place_id, item.description)}>
-              <Text numberOfLines={1}>{item.description}</Text>
+              <Text style={{fontSize: 15, lineHeight: 18, color: '#333333', paddingVertical: 18, paddingHorizontal: 18}} numberOfLines={1}>{item.description}</Text>
             </TouchableOpacity>
           )}
           keyExtractor={item => item.place_id}
           keyboardShouldPersistTaps="handled"
           style={[
             {
-              backgroundColor: '#cfcfcf',
-              padding: 10,
-              borderBottomLeftRadius: 10,
-              borderBottomRightRadius: 10,
+              backgroundColor: '#FDFDFD',
+              borderRadius: 9,
+              marginTop: 4,
             },
             {width: inputSize.width},
           ]}

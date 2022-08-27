@@ -1,12 +1,13 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {
   Dimensions, Image, PermissionsAndroid, View, Text, TouchableOpacity,
 } from 'react-native';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import Geolocation from '@react-native-community/geolocation';
 import LinearGradient from 'react-native-linear-gradient';
-import { currentPosition, stationIcon, stationPreview } from '~assets/Images';
+import { currentPosition, stationIcon, stationPreview, selectedStationIcon } from '~assets/appImages';
 
 import CustomBottomSheet from '~components/CustomBottomSheet/CustomBottomSheet';
 import { navigateTo } from '~helpers/NavigationService';
@@ -15,13 +16,17 @@ import {Location, Price, Time} from '~assets/Icons';
 import CustomButton from '~components/CustomButton/CustomButton';
 
 import { gradientColors } from '~utilities/Constants';
-import SearchBar from '../../components/SearchBar/SearchBar';
+import SearchBar from '~components/SearchBar/SearchBar';
 import {
+  // fetchDistanceBetweenPoints,
   fetchLatLng,
   useLazyGetPlacesPredictionsQuery,
+  useGetChargingStationsQuery,
 } from './api';
 
-import {markers, mcD} from './data';
+import {mcD} from './data';
+import { GOOGLE_API_KEY } from '../../constants';
+import { useDebounce } from '../../hooks/useDebounce';
 import styles from './styles';
 
 const slots = [
@@ -78,35 +83,67 @@ const slots = [
 const Booking = (props) => {
   const {stationName = 'Zeon Charging Station', stationAddress = 'Gokul Oottupura Veg Restaurant, NH66, Padivattom, Edappally', stationImage, openTime = '10:00 AM', closeTime = '10:59 PM', price = '₹ 25/kWh'} = props;
 
-  const [region, setRegion] = useState(mcD);
+  const [region, setRegion] = useState(mcD); // TO DO - update initial location
   const [search, setSearch] = useState({term: '', fetchPredictions: false});
   const [predictions, setPredictions] = useState([]);
   const [showPredictions, setShowPredictions] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState();
-  const [isVisible, setVisible] = useState(true);
+  const [showPopup, setShowPopup] = useState(false); // TO DO - remove this boolean
+  const [selectedStation, setSelectedStation] = useState(); // TO DO - use this for showing modal
 
   const mapRef = useRef();
 
+  const {data} = useGetChargingStationsQuery();
+  const formatDataIntoMarker = () => {
+    let markerSet = [];
+    if (data) {
+      markerSet = data.map(item => ({
+        id: item.id,
+        latlng: {
+          latitude: parseFloat(item.latitude),
+          longitude: parseFloat(item.longitude),
+        },
+      }));
+    }
+    return markerSet;
+  };
+
+  const markers = formatDataIntoMarker();
+
   const [getPlacesPredictions] = useLazyGetPlacesPredictionsQuery();
 
-  const onChangeText = async text => {
-    setSearch({term: text, fetchPredictions: true});
-    if (text.trim() === '') {
+  useEffect(() => {
+    const watchId = Geolocation.watchPosition(
+      pos => {
+        setRegion({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        });
+      },
+      e => console.log('rose error in watch', e),
+    );
+    return () => Geolocation.clearWatch(watchId);
+  }, []);
+
+  const onChangeText = async () => {
+    if (search.term?.trim() === '') {
       setPredictions([]);
       setShowPredictions(false);
       return;
     }
-    // const result = await fetchPredictions(text);
-    // setPredictions(result.predictions);
-    // setShowPredictions(true);
-    const res = await getPlacesPredictions(text);
-    console.log('rose predictions1', res);
+    if (!search.fetchPredictions) return;
+    const res = await getPlacesPredictions(search.term);
+    const predictionResult = res.data.predictions;
+    setPredictions(predictionResult);
+    setShowPredictions(true);
   };
+
+  useDebounce(onChangeText, 300, [search.term]);
 
   const onPredictionTapped = async (placeId, description) => {
     const result = await fetchLatLng(placeId);
     setShowPredictions(false);
-    setSearch({term: description});
+    setSearch({term: description, fetchPredictions: false});
     setRegion({latitude: result.location.lat, longitude: result.location.lng});
     updateCameraHeading(result.location);
   };
@@ -120,6 +157,45 @@ const Booking = (props) => {
     PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
     );
+  };
+
+  // eslint-disable-next-line max-len
+  const fetchDistanceBetweenPoints = (stationCoordinate, stationId) => {
+    const {latitude: lat1, longitude: lng1} = region;
+    const {latitude: lat2, longitude: lng2} = stationCoordinate;
+    const urlToFetchDistance = `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${lat1},${lng1}&destinations=${lat2}%2C${lng2}&key=${GOOGLE_API_KEY}`;
+    fetch(urlToFetchDistance)
+      .then(res => res.json())
+      .then(res => {
+        const distanceString = res.rows[0].elements[0].distance.text;
+        setSelectedStation({
+          ...stationCoordinate,
+          id: stationId,
+          distance: distanceString || 'Unable to determine',
+        });
+        return distanceString;
+      })
+      .catch(() => null);
+  };
+
+  const onSelectStation = async (stationCoordinate, stationId) => {
+    if (selectedStation?.id === stationId) { setShowPopup(false); setSelectedStation(); return; }
+    // const distance = await fetchDistanceBetweenPoints(
+    //   region.latitude,
+    //   region.longitude,
+    //   stationCoordinate.latitude,
+    //   stationCoordinate.longitude,
+    // );
+    fetchDistanceBetweenPoints(stationCoordinate, stationId);
+    // setSelectedStation({
+    //   ...stationCoordinate,
+    //   distance: distance || 'Unable to determine',
+    // });
+  };
+
+  const onClear = () => {
+    setSearch({ term: '', fetchPredictions: false});
+    setShowPredictions(false);
   };
 
   const attributes = [
@@ -137,7 +213,7 @@ const Booking = (props) => {
     },
   ];
 
-  const closeModal = () => setVisible(false);
+  const closeModal = () => setShowPopup(false);
 
   const renderAttribute = item => {
     const {Icon, label} = item;
@@ -164,7 +240,7 @@ const Booking = (props) => {
   );
 
   const navigateToBookingSuccess = () => {
-    setVisible(false);
+    setShowPopup(false);
     navigateTo('BookingSuccess');
   };
 
@@ -172,31 +248,25 @@ const Booking = (props) => {
     <>
       <MapView
         ref={mapRef}
-        provider="google"
+        provider={PROVIDER_GOOGLE}
         mapType="standard" // [hybrid, standard]
         initialRegion={region}
-        // region={region}
         onMapReady={checkForLocationPermission}
-        // onRegionChange={onRegionChange}
         showsUserLocation
         style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height}}>
-        {markers.map((marker) => (
+        {markers && markers.map((marker) => (
           <Marker
             key={marker.title}
-            // onPress={e => console.log('rose e', e)}
-            coordinate={marker.latlng}
-            title={marker.title}
-            description={marker.description}>
+            onPress={() => onSelectStation(marker.latlng, marker.id)}
+            coordinate={marker.latlng}>
+
             <Image
-              source={stationIcon}
+              source={selectedStation?.id === marker.id ? selectedStationIcon : stationIcon}
               style={{width: 36, height: 36}}
             />
           </Marker>
         ))}
-        <Marker
-          // flat
-          coordinate={region}
-        >
+        <Marker coordinate={region}>
           <Image source={currentPosition} style={{width: 24, height: 24}} />
         </Marker>
       </MapView>
@@ -211,12 +281,18 @@ const Booking = (props) => {
         }}>
         <SearchBar
           value={search.term}
-          onChangeText={onChangeText}
+          onChangeText={text => setSearch({term: text, fetchPredictions: true})}
           showPredictions={showPredictions}
           predictions={predictions}
           onPredictionTapped={onPredictionTapped}
+          onClear={onClear}
         />
-        <CustomBottomSheet handleSwipeDown={closeModal} isVisible={isVisible} customStyle={styles.modal}>
+        {showPopup && (
+        <View style={{position: 'absolute', bottom: 0, width: Dimensions.get('window').width, height: 100, backgroundColor: 'white'}}>
+          <Text style={{color: 'red'}}>{selectedStation?.distance}</Text>
+        </View>
+        )}
+        <CustomBottomSheet handleSwipeDown={closeModal} isVisible={showPopup} customStyle={styles.modal}>
           <TouchableOpacity onPress={closeModal} style={styles.slider} />
           <View style={[styles.row, styles.stationDetails]}>
             <View>

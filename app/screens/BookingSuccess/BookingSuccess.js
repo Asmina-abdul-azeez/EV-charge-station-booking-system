@@ -2,7 +2,7 @@
 import React from 'react';
 import {Image, View, Text, ScrollView, Linking, TouchableOpacity} from 'react-native';
 
-import {success, stationPreview} from '~assets/Images';
+import {success, stationPreview} from '~assets/appImages';
 import {Calendar, Contact, Navigate, Star} from '~assets/Icons';
 import {gradientColors} from '~utilities/Constants';
 import LinearGradient from 'react-native-linear-gradient';

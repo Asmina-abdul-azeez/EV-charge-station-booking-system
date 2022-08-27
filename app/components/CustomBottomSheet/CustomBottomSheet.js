@@ -17,7 +17,7 @@ const CustomBottomSheet = props => {
   return (
     <Modal
       onModalHide={onModalHide}
-      backdropOpacity={0.65}
+      backdropOpacity={0.4}
       animationType="slide"
       isVisible={isVisible}
       swipeDirection={swipeDirection}
@@ -32,6 +32,7 @@ const CustomBottomSheet = props => {
       scrollOffset={scrollOffset}
       statusBarTranslucent={isStatusBarTranslucent}
       propagateSwipe
+      backdropColor="#E6F1EB"
     >
       <View style={[styles.modalStyle, customStyle]}>{children}</View>
     </Modal>
