@@ -20,12 +20,30 @@ const styles = ScaledSheet.create({
     lineHeight: '18@mvs',
     color: Colors.GREY,
     flexWrap: 'wrap',
- },
+  },
   blackText: {
     color: Colors.BLACK,
   },
+  date: {
+    fontFamily: fonts.PRIMARY_FONT_REGULAR,
+    fontSize: '14@ms',
+    lineHeight: '16@mvs',
+    color: Colors.NIGHT_RIDER,
+  },
+  calendarContainer: {
+    justifyContent: 'space-between',
+  },
+  dateContainer: {
+    height: '28@mvs',
+    width: '138@s',
+    borderColor: Colors.SILVER,
+    borderRadius: '8@s',
+    borderWidth: 1,
+    justifyContent: 'space-between',
+    paddingHorizontal: '8@ms',
+  },
   textContainer: {
-    flex: 1
+    flex: 1,
   },
   image: {
     height: '72@s',
@@ -102,7 +120,7 @@ const styles = ScaledSheet.create({
     width: '189@ms',
     borderRadius: '10@s',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   enabledButton: {
     // opacity: 1

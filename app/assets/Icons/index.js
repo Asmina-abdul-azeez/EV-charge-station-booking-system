@@ -9,5 +9,6 @@ import Star from './star.svg';
 import Calendar from './calendar.svg';
 import Navigate from './navigate.svg';
 import Contact from './contact.svg';
+import CalendarSmall from './calendarSmall.svg';
 
-export {Eye, Price, Location, Time, HomeIcon, ProfileIcon, BookingIcon, Star, Calendar, Navigate, Contact};
+export {Eye, Price, Location, Time, HomeIcon, ProfileIcon, BookingIcon, Star, Calendar, Navigate, Contact, CalendarSmall};

@@ -14,12 +14,14 @@ import {stationIcon, selectedStationIcon, car } from '~assets/appImages';
 
 import CustomBottomSheet from '~components/CustomBottomSheet/CustomBottomSheet';
 import { navigateTo } from '~helpers/NavigationService';
-import {Location, Price, Time} from '~assets/Icons';
+import {CalendarSmall, Location, Price, Time} from '~assets/Icons';
 
 import CustomButton from '~components/CustomButton/CustomButton';
 
-import { gradientColors } from '~utilities/Constants';
+import { Colors, gradientColors } from '~utilities/Constants';
 import SearchBar from '~components/SearchBar/SearchBar';
+import { Calendar } from 'react-native-calendars';
+import moment from 'moment';
 import {
   fetchLatLng,
   useLazyGetPlacesPredictionsQuery,
@@ -42,9 +44,18 @@ const Booking = () => {
   const [selectedStation, setSelectedStation] = useState(); // TO DO - use this for showing modal
   const [isLoading, setIsLoading] = useState(false);
   const [isBooking, setIsBooking] = useState(false);
+  const [selectedDate, setSelectedDate] = useState();
+  const [markedDate, setMarkedDate] = useState({});
+  const [showCalendar, setShowCalendar] = useState();
 
   const mapRef = useRef();
   const locationFetch = useRef(false);
+
+  useEffect(() => {
+    const date = (new Date()).toLocaleDateString();
+    const formattedDate = moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD');
+    handleDateSelection(formattedDate, false);
+  }, []);
 
   const {data} = useGetChargingStationsQuery();
   const formatDataIntoMarker = () => {
@@ -87,6 +98,30 @@ const Booking = () => {
     );
     return () => Geolocation.clearWatch(watchId);
   }, []);
+
+  const handleDateSelection = async (date, fetchAPI = true) => {
+    const dateObj = {};
+    dateObj[date] = {
+      selected: true,
+      selectedColor: Colors.TURQUOISE,
+      customStyles: {
+        text: {
+          color: Colors.WHITE,
+        },
+      },
+    };
+    setMarkedDate(dateObj);
+    const formattedDate = moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY');
+    setSelectedDate(formattedDate);
+    setShowCalendar(false);
+    if (fetchAPI) {
+      const availabilityResponse = await fetchStationAvailability(selectedStation.id, formattedDate);
+      setSelectedStation({
+        ...selectedStation,
+        slots: availabilityResponse.data,
+      });
+    }
+  };
 
   const fetchStationAvailability = async (id, date) => {
     if (id && !isFetchingAvailability) {
@@ -228,6 +263,8 @@ const Booking = () => {
     });
   };
 
+  const renderCalendar = () => <Calendar markingType="custom" markedDates={markedDate} onDayPress={(date) => handleDateSelection(date.dateString)} theme={{arrowColor: Colors.TURQUOISE, selectedDayTextColor: Colors.TURQUOISE, todayTextColor: Colors.TURQUOISE}} />;
+
   const renderSlots = () => (
     <View style={[styles.row, styles.slotRow]}>
       {selectedStation?.slots?.map(slot => {
@@ -255,21 +292,23 @@ const Booking = () => {
     const response = await bookStation(payload);
     setIsBooking(false);
     if (response.data) {
-      navigateToBookingSuccess(selectedStation.latlng);
+      navigateToBookingSuccess(selectedStation.latlng, selectedStation.name, selectedStation.selectedSlot);
     } else {
       alert('Booking failed :(');
     }
   };
 
-  const navigateToBookingSuccess = ({latitude, longitude}) => {
+  const navigateToBookingSuccess = ({latitude, longitude}, stationName, selectedSlot) => {
     closePopup();
-    navigateTo('BookingSuccess', {latitude, longitude});
+    navigateTo('BookingSuccess', {latitude, longitude, stationName, selectedSlot});
   };
 
   const closePopup = () => {
     setShowPopup(false);
     setSelectedStation(null);
   };
+
+  const handleShowCalendar = () => setShowCalendar(true);
 
   return (
     <>
@@ -289,7 +328,7 @@ const Booking = () => {
             coordinate={marker.latlng}>
             <Image
               source={selectedStation?.id === marker.id ? selectedStationIcon : stationIcon}
-              style={{width: 36, height: 36}}
+              style={{width: 48, height: 48}}
             />
           </Marker>
         ))}
@@ -331,16 +370,22 @@ const Booking = () => {
           </View>
           <View style={[styles.row, styles.attributeContainer]}>{attributes.map(attribute => renderAttribute(attribute))}</View>
           <View style={styles.divider} />
-          <View style={styles.row}>
+          <View style={[styles.row, styles.calendarContainer]}>
             <Text style={[styles.subTitle, styles.blackText]}>Upcoming Slots</Text>
+            <View style={[styles.row, styles.dateContainer]}>
+              <Text style={styles.date}>{selectedDate === 'Invalid date' ? '28/08/2022' : selectedDate}</Text>
+              <TouchableOpacity activeOpacity={0.8} onPress={handleShowCalendar}><CalendarSmall /></TouchableOpacity>
+            </View>
           </View>
-          {selectedStation?.slots && renderSlots()}
+          {selectedStation?.slots && (showCalendar ? renderCalendar() : renderSlots())}
+          {!showCalendar && (
           <View style={[styles.row, styles.attributeContainer]}>
-            <CustomButton text="CANCEL" containerStyle={styles.cancel} />
+            <CustomButton onClick={closePopup} text="CANCEL" containerStyle={styles.cancel} />
             <LinearGradient useAngle angle={105.4} colors={gradientColors} style={[styles.book, !!selectedStation?.selectedSlot && styles.enabledButton]}>
-              <CustomButton onClick={onBookStation} containerStyle={styles.buttonContainer} text="BOOK NOW" isLoading={isBooking} />
+              <CustomButton onClick={onBookStation} containerStyle={styles.buttonContainer} text="BOOK NOW" isLoading={isBooking} disabled={!!selectedStation?.selectedSlot} />
             </LinearGradient>
           </View>
+          )}
         </CustomBottomSheet>
         )}
       </View>

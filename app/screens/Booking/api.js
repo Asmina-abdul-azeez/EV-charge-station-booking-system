@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {GOOGLE_API_KEY, GOOGLE_PLACES_API_BASE_URL} from '../../constants';
 import {callAPI} from '../../api/axios';
 import {bookingApi, googlePlacesApi} from '../../api/service';
