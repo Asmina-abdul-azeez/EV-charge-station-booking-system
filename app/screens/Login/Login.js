@@ -48,8 +48,8 @@ const Login = () => {
   const renderInput = ({label, placeholder, value, onChange, Icon, ref}) => (
     <View>
       <Text style={styles.label}>{label}</Text>
-      <View style={[styles.row, styles.input, emailRef.current?.isFocused() && styles.focused]}>
-        <TextInput ref={emailRef} secureTextEntry={label === 'Password' && !showPassword} onChangeText={onChange} placeholder={placeholder} value={value} placeholderTextColor={Colors.GREY} />
+      <View style={[styles.row, styles.input, ref.current?.isFocused() && styles.focused]}>
+        <TextInput style={styles.inputText} ref={ref} secureTextEntry={label === 'Password' && !showPassword} onChangeText={onChange} placeholder={placeholder} value={value} placeholderTextColor={Colors.GREY} />
         {Icon && (
           <TouchableOpacity onPress={handleShowPassword} activeOpacity={0.8}>
             <Icon />
@@ -72,7 +72,7 @@ const Login = () => {
         <Text style={styles.subTitle}>Sign in to continue!</Text>
         {inputDetails.map(input => renderInput(input))}
         <LinearGradient angle={105.4} useAngle colors={gradientColors} style={styles.button}>
-          <CustomButton onClick={navigateToBooking} text="LOGIN" textStyle={styles.buttonText} />
+          <CustomButton containerStyle={styles.buttonContainer} onClick={navigateToBooking} text="LOGIN" textStyle={styles.buttonText} />
         </LinearGradient>
       </ScrollView>
     </View>

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, {useState} from 'react';
 import {FlatList, Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import { search } from '../../assets/images';
+import { search } from '~assets/Images';
 
 const SearchBar = props => {
   // eslint-disable-next-line react/prop-types
