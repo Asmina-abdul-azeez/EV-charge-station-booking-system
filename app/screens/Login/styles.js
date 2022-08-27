@@ -43,9 +43,11 @@ const styles = ScaledSheet.create({
     justifyContent: 'space-between',
   },
   inputText: {
-    fontSize: '15@ms',
     lineHeight: '17@mvs',
     color: Colors.NIGHT_RIDER,
+    fontFamily: fonts.PRIMARY_FONT_REGULAR,
+    fontSize: '15@ms',
+    flex: 1,
   },
   forgot: {
     alignSelf: 'flex-end',
