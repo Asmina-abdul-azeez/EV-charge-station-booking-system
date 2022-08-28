@@ -7,6 +7,7 @@ import {store} from './app/store';
 import AppNavigator from './app/navigation/AppNavigator';
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreLogs(['new NativeEventEmitter']);
 LogBox.ignoreAllLogs(); // Ignore all log notifications
 
 const App = () => (

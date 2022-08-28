@@ -26,6 +26,7 @@ const BottomTabNavigator = () => (
         tabBarIcon: () => <BookingIcon style={styles.icon} />,
         tabBarIconSelected: () => <BookingIcon style={styles.selectedIcon} />,
         headerShown: false,
+        tabBarHideOnKeyboard: true,
       }}
       name="Booking"
       component={Booking}

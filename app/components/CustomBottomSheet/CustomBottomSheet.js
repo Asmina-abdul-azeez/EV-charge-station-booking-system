@@ -26,6 +26,7 @@ const CustomBottomSheet = props => {
       style={[styles.modalContainer, modalContainerStyle]}
       onBackdropPress={handleBackdropPress}
       animationOutTiming={animationOutTiming}
+      animationInTiming={800}
       avoidKeyboard
       onSwipeComplete={handleSwipeDown}
       scrollTo={handleScrollTo}
@@ -54,7 +55,7 @@ CustomBottomSheet.propTypes = {
 };
 
 CustomBottomSheet.defaultProps = {
-  animationOutTiming: 300,
+  animationOutTiming: 800,
   children: null,
   customStyle: {},
   handleBackdropPress: () => {},

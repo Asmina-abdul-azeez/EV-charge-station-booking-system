@@ -46,7 +46,7 @@ const Login = () => {
   const navigateToBooking = () => navigateTo('Booking');
 
   const renderInput = ({label, placeholder, value, onChange, Icon, ref}) => (
-    <View>
+    <View key={label}>
       <Text style={styles.label}>{label}</Text>
       <View style={[styles.row, styles.input, ref.current?.isFocused() && styles.focused]}>
         <TextInput style={styles.inputText} ref={ref} secureTextEntry={label === 'Password' && !showPassword} onChangeText={onChange} placeholder={placeholder} value={value} placeholderTextColor={Colors.GREY} />

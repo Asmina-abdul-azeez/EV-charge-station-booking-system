@@ -10,7 +10,9 @@ import CustomButton from '~components/CustomButton/CustomButton';
 import styles from './styles';
 
 const BookingSuccess = props => {
-  const {latitude, longitude} = props;
+  const {route, navigation} = props;
+  const {latitude, longitude, stationName, selectedSlot} = route?.params || {};
+  const {start, end} = selectedSlot || {};
 
   const handleContact = () => Linking.openURL('tel:9999999999');
 
@@ -26,7 +28,11 @@ const BookingSuccess = props => {
           return Linking.openURL(url);
         }
       })
-      .catch(err => console.error('An error occurred', err));
+      .catch(() => alert('Unable to open maps'));
+  };
+
+  const goToHomePage = () => {
+    navigation.navigate('Home');
   };
 
   return (
@@ -35,12 +41,12 @@ const BookingSuccess = props => {
         <Image source={success} style={styles.image} />
         <Text style={styles.title}>Charger Booked</Text>
         <Text style={styles.subTitle}>Your charger has been Successfully Booked</Text>
-        <Text style={[styles.subTitle, styles.smallText]}>Charging Hour : 2PM - 3PM</Text>
+        <Text style={[styles.subTitle, styles.smallText]}>{`Charging Hour : ${start} - ${end}`}</Text>
         <View style={styles.card}>
           <View style={styles.row}>
             <Image style={styles.stationImage} source={stationPreview} />
             <View>
-              <Text style={styles.location}>Zeon Charging Station</Text>
+              <Text style={styles.location}>{stationName}</Text>
               <View style={styles.row}>
                 <Star style={styles.star} />
                 <Text style={styles.review}>(32 reviews)</Text>
@@ -61,7 +67,7 @@ const BookingSuccess = props => {
           </View>
         </View>
         <LinearGradient useAngle angle={105.4} style={styles.button} colors={gradientColors}>
-          <CustomButton textStyle={styles.buttonText} text="GO TO HOMEPAGE" />
+          <CustomButton textStyle={styles.buttonText} text="GO TO HOMEPAGE" onClick={goToHomePage} />
         </LinearGradient>
       </ScrollView>
     </View>

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {GOOGLE_API_KEY, GOOGLE_PLACES_API_BASE_URL} from '../../constants';
 import {callAPI} from '../../api/axios';
 import {bookingApi, googlePlacesApi} from '../../api/service';
@@ -15,11 +16,21 @@ const booingApiService = bookingApi.injectEndpoints({
     getChargingStations: builder.query({
       query: () => '/charging-station',
     }),
+    getStationDetailsById: builder.query({
+      query: ({id, date}) => `/booking/slots?chargingStationId=${id}&bookingDate=${date}`,
+    }),
+    bookStation: builder.mutation({
+      query: payload => ({
+        url: '/booking',
+        method: 'POST',
+        body: payload,
+      }),
+    }),
   }),
 });
 
 export const {useGetPlacesPredictionsQuery, useLazyGetPlacesPredictionsQuery} = googleApiService;
-export const {useGetChargingStationsQuery} = booingApiService;
+export const {useGetChargingStationsQuery, useLazyGetStationDetailsByIdQuery, useBookStationMutation} = booingApiService;
 
 export const fetchPredictions = async text => {
   const url = `${GOOGLE_PLACES_API_BASE_URL}/autocomplete/json?key=${GOOGLE_API_KEY}&input=${text}`;
