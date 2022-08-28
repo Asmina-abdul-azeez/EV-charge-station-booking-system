@@ -5,7 +5,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useRef, useState, useEffect} from 'react';
 import {
-  Dimensions, Image, PermissionsAndroid, View, Text, TouchableOpacity, ActivityIndicator, Keyboard,
+  Dimensions, Image, View, Text, TouchableOpacity, ActivityIndicator, Keyboard,
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
@@ -154,17 +154,11 @@ const Booking = () => {
     setShowPredictions(false);
     setSearch({term: description, fetchPredictions: false});
     updateCameraHeading(result.location);
+    Keyboard.dismiss();
   };
 
   const updateCameraHeading = l => {
     mapRef.current.animateCamera({center: {latitude: l.lat, longitude: l.lng}});
-  };
-
-  const checkForLocationPermission = () => {
-    // TO DO - to handle if permission is denied
-    PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-    );
   };
 
   // eslint-disable-next-line max-len
@@ -202,18 +196,7 @@ const Booking = () => {
     setSelectedStation({
       id: stationInfo.id,
     });
-    // const distance = await fetchDistanceBetweenPoints(
-    //   region.latitude,
-    //   region.longitude,
-    //   stationCoordinate.latitude,
-    //   stationCoordinate.longitude,
-    // );
-    // setShowPopup(true);
     fetchDistanceBetweenPoints(stationInfo);
-    // setSelectedStation({
-    //   ...stationCoordinate,
-    //   distance: distance || 'Unable to determine',
-    // });
   };
 
   const onClear = () => {
@@ -318,7 +301,6 @@ const Booking = () => {
         provider={PROVIDER_GOOGLE}
         mapType="standard" // [hybrid, standard]
         initialRegion={region}
-        onMapReady={checkForLocationPermission}
         showsUserLocation
         style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height}}>
         {markers && markers.map((marker) => (
@@ -382,7 +364,7 @@ const Booking = () => {
           <View style={[styles.row, styles.attributeContainer]}>
             <CustomButton onClick={closePopup} text="CANCEL" containerStyle={styles.cancel} />
             <LinearGradient useAngle angle={105.4} colors={gradientColors} style={[styles.book, !!selectedStation?.selectedSlot && styles.enabledButton]}>
-              <CustomButton onClick={onBookStation} containerStyle={styles.buttonContainer} text="BOOK NOW" isLoading={isBooking} disabled={!!selectedStation?.selectedSlot} />
+              <CustomButton onClick={onBookStation} containerStyle={styles.buttonContainer} text="BOOK NOW" isLoading={isBooking} disabled={!selectedStation?.selectedSlot} />
             </LinearGradient>
           </View>
           )}

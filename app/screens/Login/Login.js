@@ -1,6 +1,6 @@
 import {ScrollView, StatusBar} from 'native-base';
-import React, {useRef, useState} from 'react';
-import {Image, View, Text, TextInput, TouchableOpacity} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {Image, View, Text, TextInput, TouchableOpacity, PermissionsAndroid} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import {Eye} from '~assets/Icons';
@@ -12,12 +12,20 @@ import {Colors, gradientColors} from '~utilities/Constants';
 import styles from './styles';
 
 const Login = () => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState('antongal@gmail.com');
+  const [password, setPassword] = useState('12345');
   const [showPassword, setShowPassword] = useState(false);
 
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
+
+  useEffect(() => {
+    checkForLocationPermission();
+  }, []);
+
+  const checkForLocationPermission = () => {
+    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+  };
 
   const inputDetails = [
     {
@@ -66,10 +74,7 @@ const Login = () => {
   return (
     <View style={styles.root}>
       <StatusBar barStyle="dark-content" />
-      <ScrollView
-        contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}
-        style={styles.root}>
+      <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false} style={styles.root}>
         <Image source={login} style={styles.image} />
         <Text style={styles.title}>Welcome,</Text>
         <Text style={styles.subTitle}>Sign in to continue!</Text>

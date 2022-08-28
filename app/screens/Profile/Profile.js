@@ -28,7 +28,7 @@ const items = [
 ];
 
 const Profile = () => (
-  <View style={{backgroundColor: 'white'}}>
+  <View style={{backgroundColor: 'white', flex: 1}}>
     <Header title="Profile" />
     <View style={{marginTop: 16, justifyContent: 'center', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#E0E0E0', paddingBottom: 16}}>
       <Image source={user} style={{width: 113, height: 113}} />
@@ -39,7 +39,7 @@ const Profile = () => (
       </View>
     </View>
     {items.map(item => (
-      <View style={{flexDirection: 'row', padding: 14, justifyContent: 'space-between', alignItems: 'center'}}>
+      <View style={{flexDirection: 'row', padding: 14, justifyContent: 'space-between', alignItems: 'center'}} key={item.id}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image source={item.src} style={{width: 14, height: 14}} />
           <Text style={{fontSize: 15, fontFamily: fonts.PRIMARY_FONT_REGULAR, color: 'black', paddingLeft: 12}}>{item.label}</Text>
