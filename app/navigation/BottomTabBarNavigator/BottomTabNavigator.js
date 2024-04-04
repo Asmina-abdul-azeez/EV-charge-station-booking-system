@@ -11,6 +11,7 @@ import styles from './styles';
 const {Navigator, Screen} = createBottomTabNavigator();
 
 const BottomTabNavigator = () => (
+  // eslint-disable-next-line react/jsx-props-no-spreading
   <Navigator initialRouteName="Booking" tabBar={props => <BottomTabBar {...props} />}>
     <Screen
       options={{
